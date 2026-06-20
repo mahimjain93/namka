@@ -34,7 +34,7 @@ export default function Home() {
         <aside className="hidden lg:block"></aside>
 
         {/* Center column - the digest */}
-        <main className="px-6 py-12 lg:py-16">
+        <main className="px-5 py-8 lg:px-6 lg:py-16 max-w-2xl mx-auto lg:max-w-none">
           <div className="mb-10 pb-6 border-b border-stone-200">
             <h1 className="text-3xl font-light tracking-tight text-stone-800 mb-1">Na(m)ka</h1>
             <p className="text-sm text-stone-400">Your weekly architecture digest</p>
