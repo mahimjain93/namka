@@ -3,23 +3,37 @@ import { supabase } from '@/lib/supabase'
 export async function POST() {
   try {
     // Get persona
-    const { data: persona } = await supabase
+    const { data: persona, error: personaError } = await supabase
       .from('persona')
       .select('*')
       .single()
 
+    if (personaError || !persona) {
+      console.error('Persona fetch error:', personaError)
+      return Response.json({ success: false, error: 'Could not load persona from Supabase' }, { status: 500 })
+    }
+
     // Get active sources
-    const { data: sources } = await supabase
+    const { data: sources, error: sourcesError } = await supabase
       .from('sources')
       .select('*')
       .eq('is_active', true)
 
+    if (sourcesError || !sources) {
+      console.error('Sources fetch error:', sourcesError)
+      return Response.json({ success: false, error: 'Could not load sources from Supabase' }, { status: 500 })
+    }
+//blum blum
     // Get past issues to avoid repetition
-    const { data: pastIssues } = await supabase
+    const { data: pastIssues, error: pastIssuesError } = await supabase
       .from('issues')
       .select('news_content, concept_content, word_content')
       .order('created_at', { ascending: false })
       .limit(8)
+
+    if (pastIssuesError) {
+      console.error('Past issues fetch error:', pastIssuesError)
+    }
 
     const sourcesList = sources.map(s => `${s.name} (${s.url})`).join('\n')
     const pastTopics = pastIssues?.map(i => `${i.news_content?.slice(0, 100)}`).join('\n') || 'none yet'
