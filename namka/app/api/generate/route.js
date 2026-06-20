@@ -84,8 +84,8 @@ CRITICAL RULES:
     const generated = data.candidates[0].content.parts[0].text
     console.log('GEMINI OUTPUT:', generated)
 
-    // Parse sections
-    // Strip any markdown that sneaks through
+    // Parse sections here
+    // Strip any markdown that sneaks through here
 	const stripMarkdown = (text) => text
  	 .replace(/#{1,6}\s/g, '')
   	.replace(/\*\*(.*?)\*\*/g, '$1')
