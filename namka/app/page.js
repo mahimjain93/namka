@@ -44,6 +44,13 @@ export default function Home() {
       {error && (
         <p className="text-red-500 text-sm mt-4">{error}</p>
       )}
+	
+      {issue?.greeting_content && (
+  	<div className="relative bg-stone-100 rounded-2xl rounded-tl-none px-5 py-4 mb-8 text-stone-600 text-sm leading-relaxed italic 	border border-stone-200">
+    	{issue.greeting_content}
+    	<div className="absolute -top-2 left-0 w-3 h-3 bg-stone-100 border-l border-t border-stone-200 rotate-45"></div>
+  	</div>
+	)}
 
       {issue && (
         <div className="space-y-8">

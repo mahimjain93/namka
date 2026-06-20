@@ -36,26 +36,33 @@ ${sourcesList}
 Topics covered in past issues (DO NOT repeat these):
 ${pastTopics}
 
-Write this week's issue with exactly 3 sections:
+Write this week's issue. You MUST structure your response using these exact markers, each on its own line, with nothing else on that line:
 
----
-CURRENT AFFAIRS
+[SECTION:GREETING]
+[SECTION:GREETING]
+Write a 2-3 line greeting to open this week's issue for Namrata. Sound like a thoughtful friend who keeps up with architecture and is excited to share something interesting — not romantic, not overly familiar, no pet names like "dear" or "babu". Keep it warm but grounded, like a text from a friend, not a love letter. Reference something timely (the week, the season, or what's coming up in the issue) to make it feel fresh.
+
+[SECTION:NEWS]
 Write 150-200 words about one genuinely current architecture/urban design story relevant to her interests. Reference a real recent project or development. Explain it like you're catching up a smart friend who's been busy. Use the tone specified above.
 
----
-CONCEPT OF THE WEEK
+[SECTION:CONCEPT]
 Pick one architectural concept, movement, or theory that connects to what's happening in the field right now. Briefly explain what it is, where it came from, and why it matters today. 150 words max.
 
----
-WORD OF THE DAY
+[SECTION:WORD]
 One architectural term she should know or be reintroduced to. Format exactly like this:
 Term: [word]
 What it means: [one conversational sentence]
 Used in a sentence: [example showing it in real context]
 Why it matters now: [one sentence connecting to current trends]
----
 
-Keep the total under 500 words. No bullet points. Write in flowing prose except for Word of the Day.`
+[END]
+
+CRITICAL RULES:
+- Do not write any text before [SECTION:GREETING]
+- Do not write any text after [END]
+- Do not use any markdown formatting whatsoever. No hashtags, no asterisks, no bold, no headers. Plain text only.
+- No bullet points except in Word of the Day section
+- Keep total under 500 words`
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
@@ -69,18 +76,36 @@ Keep the total under 500 words. No bullet points. Write in flowing prose except 
     )
 
     const data = await response.json()
+    console.log('FULL RESPONSE:', JSON.stringify(data))
+    if (!data.candidates || !data.candidates[0]) {
+       console.error('Gemini error:', data)
+       return Response.json({ success: false, error: 'Gemini is busy right now, try again in a minute' }, { status: 503 })
+}
     const generated = data.candidates[0].content.parts[0].text
+    console.log('GEMINI OUTPUT:', generated)
 
     // Parse sections
-    const sections = generated.split('---').filter(s => s.trim())
-    const newsContent = sections[0]?.trim() || ''
-    const conceptContent = sections[1]?.trim() || ''
-    const wordContent = sections[2]?.trim() || ''
+    // Strip any markdown that sneaks through
+	const stripMarkdown = (text) => text
+ 	 .replace(/#{1,6}\s/g, '')
+  	.replace(/\*\*(.*?)\*\*/g, '$1')
+  	.replace(/\*(.*?)\*/g, '$1')
+  	.replace(/__(.*?)__/g, '$1')
+  	.replace(/^---+$/gm, '')
+  	.replace(/^\[SECTION:[A-Z]+\]/gm, '')
+  	.trim()
+
+
+	const newsContent = stripMarkdown(generated.split('[SECTION:NEWS]')[1]?.split('[SECTION:CONCEPT]')[0] || '')
+	const conceptContent = stripMarkdown(generated.split('[SECTION:CONCEPT]')[1]?.split('[SECTION:WORD]')[0] || '')
+	const wordContent = stripMarkdown(generated.split('[SECTION:WORD]')[1] || '')
+	const greetingContent = stripMarkdown(generated.split('[SECTION:GREETING]')[1]?.split('[SECTION:NEWS]')[0] || '')
 
     // Save to Supabase
     const { data: issue, error } = await supabase
       .from('issues')
       .insert({
+	greeting_content: greetingContent,
         news_content: newsContent,
         concept_content: conceptContent,
         word_content: wordContent,
