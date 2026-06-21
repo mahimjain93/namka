@@ -1,6 +1,60 @@
 'use client'
 import { useState } from 'react'
 
+const NEWS_LABELS = ["What's happening:", "The case for it:", "The criticism:", "The numbers:", "In India:"]
+const CONCEPT_LABELS = ["What it is:", "Where it came from:", "Why it matters now:"]
+const TECH_LABELS = ["What it is:", "What it changes:", "Worth knowing:"]
+const WORD_LABELS = ["Term:", "What it means:", "Used in a sentence:", "Why it matters now:"]
+
+function splitTitleAndBody(text) {
+  const lines = text?.split('\n').filter(Boolean) || []
+  return { title: lines[0] || '', body: lines.slice(1).join('\n') }
+}
+
+function parseLabeledDivisions(text, labels) {
+  if (!text) return []
+  const escaped = labels.map(l => l.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+  const pattern = new RegExp(`(${escaped.join('|')})`, 'g')
+  const parts = text.split(pattern).map(p => p.trim()).filter(Boolean)
+  const segments = []
+  for (let i = 0; i < parts.length; i++) {
+    if (labels.includes(parts[i])) {
+      segments.push({ label: parts[i], content: parts[i + 1] || '' })
+      i++
+    }
+  }
+  return segments.length > 0 ? segments : [{ label: '', content: text }]
+}
+
+function BulletedContent({ text }) {
+  if (!text) return null
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean)
+
+  return (
+    <ul className="space-y-2">
+      {lines.map((line, i) => {
+        const isBullet = line.startsWith('-')
+        const content = isBullet ? line.replace(/^-\s*/, '') : line
+
+        // Split into label (up to and including first colon) and the rest
+        const colonIndex = content.indexOf(':')
+        const label = colonIndex !== -1 ? content.slice(0, colonIndex + 1) : ''
+        const rest = colonIndex !== -1 ? content.slice(colonIndex + 1) : content
+
+        return (
+          <li
+            key={i}
+            className={`text-stone-700 leading-relaxed text-[14px] ${isBullet ? 'pl-4 relative before:content-["•"] before:absolute before:left-0 before:text-stone-400' : 'list-none'}`}
+          >
+            {label && <span className="font-semibold text-stone-800">{label}</span>}
+            {rest}
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
 export default function Home() {
   const [issue, setIssue] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -26,14 +80,16 @@ export default function Home() {
 
   const issueDate = issue ? new Date(issue.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : null
 
+  const news = splitTitleAndBody(issue?.news_content)
+  const concept = splitTitleAndBody(issue?.concept_content)
+  const tech = splitTitleAndBody(issue?.tech_content)
+
   return (
     <div className="min-h-screen bg-stone-50">
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_2.2fr_1fr] gap-0 max-w-6xl mx-auto">
 
-        {/* Left sidebar - empty for now, future: archive nav */}
         <aside className="hidden lg:block"></aside>
 
-        {/* Center column - the digest */}
         <main className="px-5 py-8 lg:px-6 lg:py-16 max-w-2xl mx-auto lg:max-w-none">
           <div className="mb-10 pb-6 border-b border-stone-200">
             <h1 className="text-3xl font-light tracking-tight text-stone-800 mb-1">Na(m)ka</h1>
@@ -74,17 +130,31 @@ export default function Home() {
 
               <section className="mb-10 pb-10 border-b border-stone-200">
                 <h2 className="text-xs font-medium uppercase tracking-widest text-amber-700 mb-4">Current Affairs</h2>
-                <p className="text-stone-700 leading-relaxed whitespace-pre-wrap text-[15px]">{issue.news_content}</p>
+                {news.title && (
+                  <h3 className="text-stone-800 font-medium text-lg mb-3 leading-snug">{news.title}</h3>
+                )}
+               <BulletedContent text={news.body} />
               </section>
 
               <section className="mb-10 pb-10 border-b border-stone-200">
-                <h2 className="text-xs font-medium uppercase tracking-widest text-emerald-700 mb-4">Concept of the Week</h2>
-                <p className="text-stone-700 leading-relaxed whitespace-pre-wrap text-[15px]">{issue.concept_content}</p>
+                <h2 className="text-xs font-medium uppercase tracking-widest text-emerald-700 mb-4">Concept of the Day</h2>
+                {concept.title && (
+                  <h3 className="text-stone-800 font-medium text-lg mb-3 leading-snug">{concept.title}</h3>
+                )}
+                <BulletedContent text={concept.body} />
+              </section>
+
+              <section className="mb-10 pb-10 border-b border-stone-200">
+                <h2 className="text-xs font-medium uppercase tracking-widest text-sky-700 mb-4">Tech &amp; Architecture</h2>
+                {tech.title && (
+                  <h3 className="text-stone-800 font-medium text-lg mb-3 leading-snug">{tech.title}</h3>
+                )}
+                <BulletedContent text={tech.body} />
               </section>
 
               <section className="mb-10">
                 <h2 className="text-xs font-medium uppercase tracking-widest text-indigo-700 mb-4">Word of the Day</h2>
-                <p className="text-stone-700 leading-relaxed whitespace-pre-wrap text-[15px]">{issue.word_content}</p>
+                <BulletedContent text={issue.word_content} />
               </section>
 
               <div className="flex gap-5 pt-6 border-t border-stone-200">
@@ -105,7 +175,6 @@ export default function Home() {
           )}
         </main>
 
-        {/* Right sidebar - empty for now, future: related links, flashcards */}
         <aside className="hidden lg:block"></aside>
 
       </div>
