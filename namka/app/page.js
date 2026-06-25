@@ -84,16 +84,11 @@ export default function Home() {
   const concept = splitTitleAndBody(issue?.concept_content)
   const tech = splitTitleAndBody(issue?.tech_content)
 
-  return (
-    <div className="min-h-screen bg-stone-50">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_2.2fr_1fr] gap-0 max-w-6xl mx-auto">
-
-        <aside className="hidden lg:block"></aside>
-
-        <main className="px-5 py-8 lg:px-6 lg:py-16 max-w-2xl mx-auto lg:max-w-none">
+return (
+    <div className="px-5 py-8 lg:px-20 lg:py-16 max-w-2xl mx-auto">
           <div className="mb-10 pb-6 border-b border-stone-200">
             <h1 className="text-3xl font-light tracking-tight text-stone-800 mb-1">Na(m)ka</h1>
-            <p className="text-sm text-stone-400">Your weekly architecture digest</p>
+            <p className="text-sm text-stone-400">Your daily architecture digest</p>
           </div>
 
           {!issue && !loading && (
@@ -101,12 +96,12 @@ export default function Home() {
               onClick={generateIssue}
               className="bg-stone-800 text-white px-6 py-3 rounded-lg text-sm hover:bg-stone-700 transition-colors"
             >
-              Generate this week's issue
+              Generate today's issue
             </button>
           )}
 
           {loading && (
-            <div className="text-stone-400 text-sm animate-pulse">Curating this week's issue...</div>
+            <div className="text-stone-400 text-sm animate-pulse">Curating today's issue...</div>
           )}
 
           {error && (
@@ -173,11 +168,6 @@ export default function Home() {
               </div>
             </div>
           )}
-        </main>
-
-        <aside className="hidden lg:block"></aside>
-
-      </div>
-    </div>
+        </div>
   )
 }
