@@ -35,7 +35,7 @@ export default function Navbar() {
   return (
     <>
       {/* Desktop — left sidebar, nav anchored to bottom */}
-      <aside className="hidden lg:flex flex-col justify-between border-r border-stone-200 min-h-screen sticky top-0 w-[200px]">
+      <aside className="hidden lg:flex flex-col justify-between border-r border-stone-200 fixed top-0 left-0 h-screen w-[200px]">
         <div className="px-4 pt-6 text-xs text-stone-400 uppercase tracking-widest">
           Na(m)ka
         </div>

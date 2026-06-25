@@ -85,7 +85,7 @@ export default function Home() {
   const tech = splitTitleAndBody(issue?.tech_content)
 
 return (
-    <div className="px-5 py-8 lg:px-20 lg:py-16 max-w-2xl mx-auto">
+    <div className="px-5 py-8 lg:px-16 lg:py-16 max-w-2xl mx-auto">
           <div className="mb-10 pb-6 border-b border-stone-200">
             <h1 className="text-3xl font-light tracking-tight text-stone-800 mb-1">Na(m)ka</h1>
             <p className="text-sm text-stone-400">Your daily architecture digest</p>
