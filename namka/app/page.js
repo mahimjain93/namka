@@ -60,6 +60,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
+
   async function generateIssue() {
     setLoading(true)
     setError(null)
@@ -83,6 +84,17 @@ export default function Home() {
   const news = splitTitleAndBody(issue?.news_content)
   const concept = splitTitleAndBody(issue?.concept_content)
   const tech = splitTitleAndBody(issue?.tech_content)
+
+function handlePrint() {
+  const originalTitle = document.title
+  document.title = `Namka - ${issueDate}`
+  const restoreTitle = () => {
+    document.title = originalTitle
+    window.removeEventListener('afterprint', restoreTitle)
+  }
+  window.addEventListener('afterprint', restoreTitle)
+  window.print()
+}
 
 return (
     <div className="px-5 py-8 lg:px-16 lg:py-16 max-w-2xl mx-auto">
@@ -154,7 +166,7 @@ return (
 
               <div className="flex gap-5 pt-6 border-t border-stone-200">
                 <button
-                  onClick={() => window.print()}
+                  onClick={handlePrint}
                   className="text-sm text-stone-500 hover:text-stone-800 transition-colors"
                 >
                   Print / Save as PDF
