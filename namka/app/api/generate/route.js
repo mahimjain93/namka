@@ -169,7 +169,7 @@ CRITICAL RULES:
         definition,
         example_sentence: example,
         type: 'word',
-        status: 'learning'
+        status: 'learning',
         issue_id: issue.id
       })
     }
