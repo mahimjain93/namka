@@ -92,7 +92,7 @@ export default function Flashcards() {
               : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
           }`}
         >
-          Learning ({learningCards.length})
+          Revisit ({learningCards.length})
         </button>
         <button
           onClick={() => switchTab('known')}
@@ -102,7 +102,7 @@ export default function Flashcards() {
               : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
           }`}
         >
-          Known ({knownCards.length})
+          Got It ({knownCards.length})
         </button>
       </div>
 
