@@ -73,6 +73,18 @@ export default function IssueDetail() {
   const issueDate = new Date(issue.created_at).toLocaleDateString('en-IN', {
     day: 'numeric', month: 'long', year: 'numeric'
   })
+  
+  function handlePrint() {
+    const originalTitle = document.title
+    document.title = `Namka - ${issueDate}`
+    const restoreTitle = () => {
+    document.title = originalTitle
+    window.removeEventListener('afterprint', restoreTitle)
+  }
+    window.addEventListener('afterprint', restoreTitle)
+    window.print()
+  }
+
   const news = splitTitleAndBody(issue.news_content)
   const concept = splitTitleAndBody(issue.concept_content)
   const tech = splitTitleAndBody(issue.tech_content)
@@ -119,6 +131,14 @@ export default function IssueDetail() {
         <h2 className="text-xs font-medium uppercase tracking-widest text-indigo-700 mb-4">Word of the Day</h2>
         <BulletedContent text={issue.word_content} />
       </section>
+      <div className="flex gap-5 pt-6 border-t border-stone-200">
+        <button
+          onClick={handlePrint}
+          className="text-sm text-stone-500 hover:text-stone-800 transition-colors"
+        >
+          Print / Save as PDF
+        </button>
+      </div>
     </div>
   )
 }

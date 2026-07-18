@@ -170,6 +170,7 @@ CRITICAL RULES:
         example_sentence: example,
         type: 'word',
         status: 'learning'
+        issue_id: issue.id
       })
     }
 

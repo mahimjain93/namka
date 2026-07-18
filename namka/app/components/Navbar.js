@@ -36,9 +36,9 @@ export default function Navbar() {
     <>
       {/* Desktop — left sidebar, nav anchored to bottom */}
       <aside className="hidden lg:flex flex-col justify-between border-r border-stone-200 fixed top-0 left-0 h-screen w-[200px]">
-        <div className="px-4 pt-6 text-xs text-stone-400 uppercase tracking-widest">
-          Na(m)ka
-        </div>
+        <Link href="/" className="px-4 pt-6 text-xs text-stone-400 uppercase tracking-widest hover:text-stone-600 transition-colors">
+         Na(m)ka
+        </Link>
         <nav className="px-3 pb-6 flex flex-col gap-1">
           {links.map(({ href, label }) => (
             <Link
